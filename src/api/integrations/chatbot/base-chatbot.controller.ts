@@ -4,7 +4,7 @@ import { PrismaRepository } from '@api/repository/repository.service';
 import { WAMonitoringService } from '@api/services/monitor.service';
 import { Logger } from '@config/logger.config';
 import { BadRequestException } from '@exceptions';
-import { TriggerOperator, TriggerType } from '@prisma/client';
+// import { TriggerOperator, TriggerType } from '@prisma/client'; // Tipos serão gerados quando necessário
 import { getConversationMessage } from '@utils/getConversationMessage';
 
 import { BaseChatbotDto } from './base-chatbot.dto';
@@ -38,8 +38,8 @@ export interface BaseBotData {
   stopBotFromMe?: boolean;
   keepOpen?: boolean;
   debounceTime?: number;
-  triggerType: string | TriggerType;
-  triggerOperator?: string | TriggerOperator;
+  triggerType: string;
+  triggerOperator?: string;
   triggerValue?: string;
   ignoreJids?: string[];
   splitMessages?: boolean;
@@ -838,15 +838,16 @@ export abstract class BaseChatbotController<BotType = any, BotData extends BaseC
       let splitMessages = findBot.splitMessages;
       let timePerChar = findBot.timePerChar;
 
-      if (expire === undefined || expire === null) expire = settings.expire;
-      if (keywordFinish === undefined || keywordFinish === null) keywordFinish = settings.keywordFinish;
-      if (delayMessage === undefined || delayMessage === null) delayMessage = settings.delayMessage;
-      if (unknownMessage === undefined || unknownMessage === null) unknownMessage = settings.unknownMessage;
-      if (listeningFromMe === undefined || listeningFromMe === null) listeningFromMe = settings.listeningFromMe;
-      if (stopBotFromMe === undefined || stopBotFromMe === null) stopBotFromMe = settings.stopBotFromMe;
-      if (keepOpen === undefined || keepOpen === null) keepOpen = settings.keepOpen;
-      if (debounceTime === undefined || debounceTime === null) debounceTime = settings.debounceTime;
-      if (ignoreJids === undefined || ignoreJids === null) ignoreJids = settings.ignoreJids;
+      // Use optional chaining e valores padrão para evitar erros se settings for null
+      if (expire === undefined || expire === null) expire = settings?.expire ?? 300;
+      if (keywordFinish === undefined || keywordFinish === null) keywordFinish = settings?.keywordFinish ?? 'bye';
+      if (delayMessage === undefined || delayMessage === null) delayMessage = settings?.delayMessage ?? 1000;
+      if (unknownMessage === undefined || unknownMessage === null) unknownMessage = settings?.unknownMessage ?? 'Sorry, I dont understand';
+      if (listeningFromMe === undefined || listeningFromMe === null) listeningFromMe = settings?.listeningFromMe ?? true;
+      if (stopBotFromMe === undefined || stopBotFromMe === null) stopBotFromMe = settings?.stopBotFromMe ?? true;
+      if (keepOpen === undefined || keepOpen === null) keepOpen = settings?.keepOpen ?? false;
+      if (debounceTime === undefined || debounceTime === null) debounceTime = settings?.debounceTime ?? 1;
+      if (ignoreJids === undefined || ignoreJids === null) ignoreJids = settings?.ignoreJids ?? [];
       if (splitMessages === undefined || splitMessages === null) splitMessages = settings?.splitMessages ?? false;
       if (timePerChar === undefined || timePerChar === null) timePerChar = settings?.timePerChar ?? 0;
 

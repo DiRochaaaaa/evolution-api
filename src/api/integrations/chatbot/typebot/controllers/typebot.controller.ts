@@ -159,17 +159,19 @@ export class TypebotController extends BaseChatbotController<TypebotModel, Typeb
       !debounceTime ||
       !ignoreJids
     ) {
-      if (expire === undefined || expire === null) expire = defaultSettingCheck.expire;
-      if (keywordFinish === undefined || keywordFinish === null) keywordFinish = defaultSettingCheck.keywordFinish;
-      if (delayMessage === undefined || delayMessage === null) delayMessage = defaultSettingCheck.delayMessage;
-      if (unknownMessage === undefined || unknownMessage === null) unknownMessage = defaultSettingCheck.unknownMessage;
+      // Use valores padrão se defaultSettingCheck for null ou se as propriedades específicas forem undefined/null
+      if (expire === undefined || expire === null) expire = defaultSettingCheck?.expire ?? 300;
+      if (keywordFinish === undefined || keywordFinish === null) keywordFinish = defaultSettingCheck?.keywordFinish ?? 'bye';
+      if (delayMessage === undefined || delayMessage === null) delayMessage = defaultSettingCheck?.delayMessage ?? 1000;
+      if (unknownMessage === undefined || unknownMessage === null) unknownMessage = defaultSettingCheck?.unknownMessage ?? 'Sorry, I dont understand';
       if (listeningFromMe === undefined || listeningFromMe === null)
-        listeningFromMe = defaultSettingCheck.listeningFromMe;
-      if (stopBotFromMe === undefined || stopBotFromMe === null) stopBotFromMe = defaultSettingCheck.stopBotFromMe;
-      if (keepOpen === undefined || keepOpen === null) keepOpen = defaultSettingCheck.keepOpen;
-      if (debounceTime === undefined || debounceTime === null) debounceTime = defaultSettingCheck.debounceTime;
-      if (ignoreJids === undefined || ignoreJids === null) ignoreJids = defaultSettingCheck.ignoreJids;
+        listeningFromMe = defaultSettingCheck?.listeningFromMe ?? true;
+      if (stopBotFromMe === undefined || stopBotFromMe === null) stopBotFromMe = defaultSettingCheck?.stopBotFromMe ?? true;
+      if (keepOpen === undefined || keepOpen === null) keepOpen = defaultSettingCheck?.keepOpen ?? false;
+      if (debounceTime === undefined || debounceTime === null) debounceTime = defaultSettingCheck?.debounceTime ?? 1;
+      if (ignoreJids === undefined || ignoreJids === null) ignoreJids = defaultSettingCheck?.ignoreJids ?? [];
 
+      // Criar configurações padrão se elas não existirem
       if (!defaultSettingCheck) {
         await this.settings(instance, {
           expire: expire,
